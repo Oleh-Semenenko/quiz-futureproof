@@ -1,44 +1,50 @@
 import { questions } from '../data/questions.js';
 import { store } from '../store.js';
 
-export function renderQuestionScreen(index, state) {
+export function renderQuestionScreen(mainContentEl, index, state) {
   const questionData = questions[index];
-  const rootElement = document.getElementById('root');
 
-  const selectedAnswerId = state.answers[questionData.id];
+  const savedAnswer = state.answers[questionData.id];
+  const isAnswered = !!savedAnswer;
 
-  rootElement.innerHTML = `
-  <div class="question-screen">
-    <div class="question-header">
-      <h2>Питання ${index + 1} з ${questions.length}</h2>
-      <button class="question-back-button">Повернутись назад</button>
-    </div>
-    <fieldset class="question-fieldset">
-      <legend>${questionData.question}</legend>
-      ${questionData.options
-        .map(
-          (option) => `
-        <label class="question-label">
-          <input
-            type="radio"
-            name="question-option"
-            value="${option.id}"
-            ${selectedAnswerId === option.id ? 'checked' : ''}
-            class="question-input" />
-          ${option.text}
-        </label>
-      `
-        )
-        .join('')}
-    </fieldset>
-  </div>  
+  mainContentEl.innerHTML = `
+  <div class="container">
+    <div class="question-screen">
+      <fieldset class="question-fieldset" ${isAnswered ? 'disabled' : ''}>
+        <legend>${questionData.question}</legend>
+        ${questionData.options
+          .map(
+            (option) => `
+          <label class="question-label">
+            <input
+              type="radio"
+              name="question-option"
+              value="${option.id}"
+              ${savedAnswer?.selectedOptionId === option.id ? 'checked' : ''}
+              class="question-input" />
+            ${option.text}
+          </label>
+        `
+          )
+          .join('')}
+      </fieldset>
+
+      ${isAnswered ? '<button id="next-btn" class="next-btn">Далі →</button>' : ''}
+    </div>  
+  </div>
   `;
 
-  const fieldsetEl = rootElement.querySelector('.question-fieldset');
-  const question = questions.find((q) => q.id === questionData.id);
-  const currentSelectedOptionId = state.answers[questionData.id];
-  console.log('Current selected option ID:', currentSelectedOptionId);
-  toggleAnswerClasses(question, fieldsetEl, currentSelectedOptionId);
+  if (isAnswered) {
+  mainContentEl.querySelector('#next-btn').onclick = () => {
+    store.updateState({ currentStep: state.currentStep + 1 });
+  };
+}
+
+  const fieldsetEl = mainContentEl.querySelector('.question-fieldset');
+
+  if (savedAnswer) {
+    toggleAnswerClasses(questionData, fieldsetEl, savedAnswer.selectedOptionId);
+  }
 
   if (fieldsetEl) {
     fieldsetEl.onchange = (e) => {
@@ -48,13 +54,6 @@ export function renderQuestionScreen(index, state) {
       }
     };
   }
-
-  rootElement.querySelector('.question-back-button').onclick = () => {
-    const currentState = store.getState();
-    store.updateState({
-      currentStep: Math.max(0, currentState.currentStep - 1)
-    });
-  };
 }
 
 function handleAnswer(questionId, selectedOptionId, targetElement, fieldsetEl) {
@@ -78,7 +77,10 @@ function handleAnswer(questionId, selectedOptionId, targetElement, fieldsetEl) {
     const latestState = store.getState();
     const updatedAnswers = {
       ...latestState.answers,
-      [questionId]: selectedOptionId
+      [questionId]: {
+        selectedOptionId,
+        isCorrect: chosenOption.isCorrect
+      }
     };
 
     store.updateState({
@@ -88,17 +90,18 @@ function handleAnswer(questionId, selectedOptionId, targetElement, fieldsetEl) {
   }, 2000);
 }
 
-const toggleAnswerClasses = (question, fieldsetEl, selectedOptionId) => {
-  console.log('Toggling answer classes for option ID:', selectedOptionId);
+const toggleAnswerClasses = (question, fieldsetEl, selectedId) => {
   const labels = fieldsetEl.querySelectorAll('label');
   labels.forEach((label) => {
     const input = label.querySelector('input');
     const option = question.options.find((opt) => opt.id === input.value);
 
-    if (option.isCorrect && selectedOptionId) {
-      label.classList.add('correct'); // Правильна завжди зелена
-    } else if (input.value === selectedOptionId) {
-      label.classList.add('incorrect'); // Якщо юзер обрав цю і вона не правильна — червона
+    if (selectedId) {
+      if (option.isCorrect) {
+        label.classList.add('correct');
+      } else if (input.value === selectedId) {
+        label.classList.add('incorrect');
+      }
     }
   });
 };
