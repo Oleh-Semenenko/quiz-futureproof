@@ -23,8 +23,11 @@ body {
   line-height: 1.5;
   -webkit-font-smoothing: antialiased;
   background-color: var(--bg-color, #f4f4f4);
-  color: var(--text-color, #333);
-  font-family: system-ui, -apple-system, sans-serif;
+  color: var(--text-color);
+  font-family:
+    system-ui,
+    -apple-system,
+    sans-serif;
 }
 
 /* 4. Покращуємо роботу з картинками та медіа */

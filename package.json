@@ -1,0 +1,25 @@
+{
+  "name": "quiz-futureproof",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Oleh-Semenenko/quiz-futureproof.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Oleh-Semenenko/quiz-futureproof/issues"
+  },
+  "homepage": "https://github.com/Oleh-Semenenko/quiz-futureproof#readme",
+  "description": "",
+  "devDependencies": {
+    "eslint": "^9.39.2",
+    "eslint-config-prettier": "^10.1.8",
+    "prettier": "^3.8.0"
+  }
+}

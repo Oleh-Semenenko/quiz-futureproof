@@ -18,7 +18,7 @@ export const renderEmailScreen = (mainContentEl, state) => {
           aria-describedby="email-error"
           required
         />
-        <span class="error-message" role="alert id="email-error"></span>
+        <span class="error-message" role="alert" id="email-error"></span>
 
         <button type="submit" id="submit-email-btn" class="submit-btn">
           Надіслати

@@ -1,8 +1,23 @@
 :root {
-  --primary-color: #4A90E2;
-  --success-color: #2ECC71;
-  --error-color: #E74C3C;
-  --bg-color: #F5F7FA;
-  --text-color: #333;
-  --border-radius: 8px;
+  /* Основна палітра */
+  --primary-color: #4f46e5;
+  --primary-hover: #4338ca;
+
+  /* Статуси */
+  --success-color: #22c55e;
+  --success-bg: #f0fdf4;
+  --error-color: #ef4444;
+  --error-bg: #fef2f2;
+
+  /* Текст та фон */
+  --bg-color: #f8fafc;
+  --text-color: #1e293b;
+  --text-muted: #64748b;
+
+  /* Конструктив */
+  --border-radius: 12px;
+  --border-color: #e2e8f0;
+  --card-shadow:
+    0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+  --card-shadow-hover: 0 10px 15px -3px rgb(0 0 0 / 0.1);
 }

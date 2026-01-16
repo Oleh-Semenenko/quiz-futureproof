@@ -1,1 +1,50 @@
-.result__user-email {}
+.results-screen {
+  background-color: #ffffff;
+  padding: 40px;
+  border-radius: var(--border-radius);
+  box-shadow: var(--card-shadow);
+  text-align: center;
+  animation: fadeIn 0.5s ease-out;
+}
+
+.result-score {
+  font-size: 3rem;
+  font-weight: 800;
+  color: var(--primary-color);
+  margin: 20px 0;
+}
+
+.result__user-email {
+  font-size: 1rem;
+  color: var(--text-muted);
+  background-color: var(--bg-color);
+  padding: 12px;
+  border-radius: 8px;
+  border: 1px dashed var(--border-color);
+  margin-top: 24px;
+}
+
+.restart-btn {
+  margin-top: 32px;
+  background-color: var(--primary-color);
+  color: white;
+  border: none;
+  padding: 12px 32px;
+  font-weight: 700;
+  width: 100%;
+}
+
+.restart-btn:hover {
+  background-color: var(--primary-hover);
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
