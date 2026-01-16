@@ -3,7 +3,7 @@ const APP_STORAGE_KEY = 'quiz_app_state_v1';
 let state = JSON.parse(localStorage.getItem(APP_STORAGE_KEY)) || {
   currentStep: 0,
   answers: {},
-  userEmail: ''
+  userEmail: '',
 };
 
 const listeners = [];
@@ -21,6 +21,15 @@ export const store = {
     notifyListeners();
   },
 
+  resetQuiz: () => {
+    const emptyState = {
+      currentStep: 0,
+      answers: {},
+      userEmail: '',
+    };
+    store.updateState(emptyState);
+  },
+
   subscribe: (listener) => {
     if (listeners.includes(listener)) return;
     listeners.push(listener);
@@ -28,5 +37,5 @@ export const store = {
     return () => {
       listeners = listeners.filter((l) => l !== listener);
     };
-  }
+  },
 };

@@ -1,8 +1,14 @@
-import { questions } from '../data/questions.js';
+import { getQuestionByIndex, getCorrectAnswer } from '../data/questions.js';
 import { store } from '../store.js';
 
-export function renderQuestionScreen(mainContentEl, index, state) {
-  const questionData = questions[index];
+const TIMEOUT_DELAY = 1500;
+let answerTimeoutId = null;
+
+export function renderQuestionScreen(mainContentEl, index) {
+  const state = store.getState();
+  const questionData = getQuestionByIndex(index);
+
+  if (!questionData) return;
 
   const savedAnswer = state.answers[questionData.id];
   const isAnswered = !!savedAnswer;
@@ -29,16 +35,16 @@ export function renderQuestionScreen(mainContentEl, index, state) {
           .join('')}
       </fieldset>
 
-      ${isAnswered ? '<button id="next-btn" class="next-btn">Далі →</button>' : ''}
+      ${isAnswered ? '<button id="next-btn" class="next-btn">Next →</button>' : ''}
     </div>  
   </div>
   `;
 
   if (isAnswered) {
-  mainContentEl.querySelector('#next-btn').onclick = () => {
-    store.updateState({ currentStep: state.currentStep + 1 });
-  };
-}
+    mainContentEl.querySelector('#next-btn').onclick = () => {
+      store.updateState({ currentStep: state.currentStep + 1 });
+    };
+  }
 
   const fieldsetEl = mainContentEl.querySelector('.question-fieldset');
 
@@ -50,44 +56,53 @@ export function renderQuestionScreen(mainContentEl, index, state) {
     fieldsetEl.onchange = (e) => {
       if (e.target.classList.contains('question-input')) {
         const selectedAnswerId = e.target.value;
-        handleAnswer(questionData.id, selectedAnswerId, e.target, fieldsetEl);
+        handleAnswer(questionData, selectedAnswerId, e.target, fieldsetEl);
       }
     };
   }
 }
 
-function handleAnswer(questionId, selectedOptionId, targetElement, fieldsetEl) {
+function handleAnswer(
+  questionData,
+  selectedOptionId,
+  targetElement,
+  fieldsetEl
+) {
+  if (answerTimeoutId) {
+    clearTimeout(answerTimeoutId);
+  }
+
   const inputs = fieldsetEl.querySelectorAll('input');
   inputs.forEach((input) => (input.disabled = true));
 
-  const question = questions.find((q) => q.id === questionId);
-  const chosenOption = question.options.find(
-    (opt) => opt.id === selectedOptionId
-  );
+  const correctAnswer = getCorrectAnswer(questionData.id);
+  const isCorrect = selectedOptionId === correctAnswer.id;
 
-  toggleAnswerClasses(question, fieldsetEl, selectedOptionId);
+  toggleAnswerClasses(questionData, fieldsetEl, selectedOptionId);
 
-  if (chosenOption.isCorrect) {
+  if (isCorrect) {
     targetElement.parentElement.classList.add('correct');
   } else {
     targetElement.parentElement.classList.add('incorrect');
   }
 
-  setTimeout(() => {
+  answerTimeoutId = setTimeout(() => {
     const latestState = store.getState();
     const updatedAnswers = {
       ...latestState.answers,
-      [questionId]: {
+      [questionData.id]: {
         selectedOptionId,
-        isCorrect: chosenOption.isCorrect
-      }
+        isCorrect: isCorrect,
+      },
     };
 
     store.updateState({
       answers: updatedAnswers,
-      currentStep: latestState.currentStep + 1
+      currentStep: latestState.currentStep + 1,
     });
-  }, 2000);
+
+    answerTimeoutId = null;
+  }, TIMEOUT_DELAY);
 }
 
 const toggleAnswerClasses = (question, fieldsetEl, selectedId) => {

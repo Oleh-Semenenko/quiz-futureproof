@@ -1,4 +1,4 @@
-import { questions } from './data/questions.js';
+import { getQuestionsCount } from './data/questions.js';
 import { store } from './store.js';
 import { renderQuestionScreen } from './components/QuestionScreen.js';
 import { renderEmailScreen } from './components/EmailScreen.js';
@@ -10,14 +10,20 @@ function renderApp() {
   const currentScreen = state.currentStep;
   const rootEl = document.getElementById('root');
 
-  let headerProps = { title: 'Квіз', showGoBackBtn: currentScreen > 0 };
+  let headerProps = {
+    title: 'Quiz',
+    currentStep: currentScreen,
+    showGoBackBtn: currentScreen > 0,
+  };
 
-  if (currentScreen < questions.length) {
-    headerProps.title = `Питання ${currentScreen + 1} з ${questions.length}`;
-  } else if (currentScreen === questions.length) {
-    headerProps.title = 'Введіть вашу пошту';
+  const totalQuestionsAmount = getQuestionsCount();
+
+  if (currentScreen < totalQuestionsAmount) {
+    headerProps.title = `Question ${currentScreen + 1} of ${totalQuestionsAmount}`;
+  } else if (currentScreen === totalQuestionsAmount) {
+    headerProps.title = 'Enter your email';
   } else {
-    headerProps.title = 'Результати тесту';
+    headerProps.title = 'Quiz Results';
     headerProps.showGoBackBtn = false;
   }
 
@@ -31,13 +37,18 @@ function renderApp() {
   const mainContentEl = document.getElementById('main-content');
   mainContentEl.innerHTML = '';
 
+  let screenType = 'question';
+  if (currentScreen === totalQuestionsAmount) screenType = 'email';
+  if (currentScreen > totalQuestionsAmount) screenType = 'result';
 
-  if (currentScreen < questions.length) {
-    renderQuestionScreen(mainContentEl, currentScreen, state);
-  } else if (currentScreen === questions.length) {
-    renderEmailScreen(mainContentEl, state);
-  } else {
-    renderResultsScreen(mainContentEl, state);
+  const screensRenderFunctionsMap = {
+    question: () => renderQuestionScreen(mainContentEl, currentScreen),
+    email: () => renderEmailScreen(mainContentEl),
+    result: () => renderResultsScreen(mainContentEl),
+  };
+
+  if (screensRenderFunctionsMap[screenType]) {
+    screensRenderFunctionsMap[screenType]();
   }
 }
 

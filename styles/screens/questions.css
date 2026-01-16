@@ -1,163 +1,110 @@
-/* .question-header {
+.question-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  gap: 12px;
-  margin-bottom: 16px;
+  gap: 1.2rem;
+  margin-bottom: 2.4rem;
+}
+
+.question-header h2 {
+  font-size: 0.9rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--text-muted);
+  margin: 0;
 }
 
 .question-fieldset {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 1.6rem;
   border: none;
+  padding: 0;
+  margin: 0;
 }
 
-.question-fieldset:disabled input.question-input  {
-  opacity: 0.9;
-  cursor: not-allowed;
+.question-fieldset legend {
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: var(--text-color);
+  margin-bottom: 2.4rem;
+  line-height: 1.3;
 }
 
 input.question-input {
   appearance: none;
   border-radius: 50%;
-  width: 16px;
-  height: 16px;
-  border: 2px solid #999999;
-  transition: 0.2s all linear;
+  width: 2rem;
+  height: 2rem;
+  border: 0.2rem solid #cbd5e1;
+  background-color: #ffffff;
+  transition: all 0.2s ease;
   flex-shrink: 0;
+  position: relative;
+  cursor: pointer;
 }
 
 input.question-input:checked {
-  border: 6px solid #4a4af4;
+  border-color: var(--primary-color);
+  background-color: var(--primary-color);
+  box-shadow: inset 0 0 0 0.4rem #ffffff;
 }
 
 .question-label {
-  font-size: 18px;
-  color: #333333;
+  font-size: 1rem;
+  font-weight: 500;
+  color: var(--text-color);
   cursor: pointer;
   border-radius: var(--border-radius);
-  padding: 6px 12px;
-  transition: 0.2s all linear;
+  padding: 1.6rem 2rem;
+  background-color: #ffffff;
+  border: 2px solid var(--border-color);
+  box-shadow: var(--card-shadow);
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
   display: flex;
   align-items: center;
-  gap: 8px;
-}
-.question-label.correct {
-  background-color: #94ed97;
-}
-.question-label.incorrect {
-  background-color: #f5a39d;
-} */
-
-.question-header {
-display: flex;
-justify-content: space-between;
-align-items: center;
-gap: 12px;
-margin-bottom: 24px;
-}
-
-.question-header h2 {
-font-size: 0.9rem;
-text-transform: uppercase;
-letter-spacing: 0.05em;
-color: var(--text-muted);
-margin: 0;
-}
-
-.question-fieldset {
-display: flex;
-flex-direction: column;
-gap: 16px;
-border: none;
-padding: 0;
-margin: 0;
-}
-
-.question-fieldset legend {
-font-size: 1.4rem;
-font-weight: 700;
-color: var(--text-color);
-margin-bottom: 24px;
-line-height: 1.3;
-}
-
-/* Кастомний радіо-інпут */
-input.question-input {
-appearance: none;
-border-radius: 50%;
-width: 20px;
-height: 20px;
-border: 2px solid #cbd5e1;
-background-color: #ffffff;
-transition: all 0.2s ease;
-flex-shrink: 0;
-position: relative;
-cursor: pointer;
-}
-
-input.question-input:checked {
-border-color: var(--primary-color);
-background-color: var(--primary-color);
-box-shadow: inset 0 0 0 4px #ffffff;
-}
-
-/* Стилізація лейбла як картки */
-.question-label {
-font-size: 1rem;
-font-weight: 500;
-color: var(--text-color);
-cursor: pointer;
-border-radius: var(--border-radius);
-padding: 16px 20px;
-background-color: #ffffff;
-border: 2px solid var(--border-color);
-box-shadow: var(--card-shadow);
-transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-display: flex;
-align-items: center;
-gap: 12px;
+  gap: 1.2rem;
 }
 
 /* Ховер ефект для картки */
 .question-label:hover:not(.correct):not(.incorrect) {
-border-color: var(--primary-color);
-transform: translateX(4px);
-box-shadow: var(--card-shadow-hover);
+  border-color: var(--primary-color);
+  transform: translateX(0.4rem);
+  box-shadow: var(--card-shadow-hover);
+  cursor: pointer;
 }
 
 /* Стани правильної/неправильної відповіді */
 .question-label.correct {
-background-color: var(--success-bg);
-border-color: var(--success-color);
-color: var(--success-color);
+  background-color: var(--success-bg);
+  border-color: var(--success-color);
+  color: var(--success-color);
 }
 
 .question-label.correct input.question-input {
-border-color: var(--success-color);
-background-color: var(--success-color);
-box-shadow: inset 0 0 0 4px var(--success-bg);
+  border-color: var(--success-color);
+  background-color: var(--success-color);
+  box-shadow: inset 0 0 0 0.4rem var(--success-bg);
 }
 
 .question-label.incorrect {
-background-color: var(--error-bg);
-border-color: var(--error-color);
-color: var(--error-color);
+  background-color: var(--error-bg);
+  border-color: var(--error-color);
+  color: var(--error-color);
 }
 
 .question-label.incorrect input.question-input {
-border-color: var(--error-color);
-background-color: var(--error-color);
-box-shadow: inset 0 0 0 4px var(--error-bg);
+  border-color: var(--error-color);
+  background-color: var(--error-color);
+  box-shadow: inset 0 0 0 0.4rem var(--error-bg);
 }
 
 /* Стан заблокованого поля */
 .question-fieldset:disabled .question-label {
-cursor: default;
+  cursor: default;
 }
 
 .question-fieldset:disabled input.question-input {
-cursor: default;
-opacity: 0.7;
+  cursor: default;
+  opacity: 0.7;
 }
