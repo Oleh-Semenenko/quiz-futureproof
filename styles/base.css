@@ -23,9 +23,13 @@ h1 {
   color: var(--primary-color);
 }
 
+#main-content {
+  padding: 4rem 0;
+}
+
 .container {
   max-width: 60rem;
-  margin: 4rem auto;
+  margin: 0 auto;
   padding: 0 2rem;
 }
 
@@ -36,7 +40,7 @@ button {
   padding: 0.6rem 1.2rem;
   border-radius: var(--border-radius);
   border: 0.1rem solid var(--border-color);
-  background-color: #ffffff;
+  background-color: var(--white-color);
   color: var(--text-color);
   cursor: pointer;
   transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
@@ -58,7 +62,7 @@ button:active {
 button#submit-email-btn,
 button.next-btn {
   background-color: var(--primary-color);
-  color: white;
+  color: var(--white-color);
   border: none;
   width: 100%;
   margin-top: 2rem;

@@ -51,7 +51,7 @@ input.question-input:checked {
 }
 
 .question-label {
-  font-size: 1rem;
+  font-size: 1.4rem;
   font-weight: 500;
   color: var(--text-color);
   cursor: pointer;

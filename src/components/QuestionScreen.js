@@ -77,6 +77,9 @@ function handleAnswer(
 
   const correctAnswer = getCorrectAnswer(questionData.id);
   const isCorrect = selectedOptionId === correctAnswer.id;
+  const chosenOption = questionData.options.find(
+    (opt) => opt.id === selectedOptionId
+  );
 
   toggleAnswerClasses(questionData, fieldsetEl, selectedOptionId);
 
@@ -91,7 +94,9 @@ function handleAnswer(
     const updatedAnswers = {
       ...latestState.answers,
       [questionData.id]: {
-        selectedOptionId,
+        questionText: questionData.question,
+        selectedOptionText: chosenOption ? chosenOption.text : 'Невідомо',
+        correctOptionText: correctAnswer.text,
         isCorrect: isCorrect,
       },
     };

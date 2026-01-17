@@ -1,10 +1,14 @@
 .results-screen {
-  background-color: #ffffff;
+  background-color: var(--white-color);
   padding: 4rem;
   border-radius: var(--border-radius);
   box-shadow: var(--card-shadow);
   text-align: center;
   animation: fadeIn 0.5s ease-out;
+  margin-bottom: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 1.6rem;
 }
 
 .result-score {
@@ -24,14 +28,12 @@
   padding: 1.2rem;
   border-radius: 0.8rem;
   border: 0.1rem dashed var(--border-color);
-  margin-top: 2.4rem;
 }
 .result__user-email span {
   font-weight: 700;
 }
 
 .restart-btn {
-  margin-top: 3.2rem;
   background-color: var(--primary-color);
   color: white;
   border: none;
@@ -53,4 +55,174 @@
     opacity: 1;
     transform: translateY(0);
   }
+}
+
+.answers-review h3 {
+  font-size: 1.6rem;
+  font-weight: 700;
+  margin-bottom: 1.2rem;
+}
+
+.review-item {
+  background: var(--white-color);
+  padding: 2rem;
+  border-radius: var(--border-radius);
+  border: 0.1rem solid var(--border-color);
+  margin-bottom: 1.6rem;
+  transition:
+    transform 0.2s ease,
+    border-color 0.2s ease;
+}
+
+.review-item:hover {
+  border-color: #cbd5e1;
+  transform: translateX(4px);
+}
+
+.review-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.review-number {
+  font-size: 1.2rem;
+  color: var(--text-muted);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.status-badge {
+  font-size: 1rem;
+  font-weight: 700;
+  padding: 0.4rem 1rem;
+  border-radius: 2rem;
+  text-transform: uppercase;
+}
+
+.correct .status-badge {
+  background: var(--success-bg);
+  color: var(--success-color);
+}
+
+.incorrect .status-badge {
+  background: var(--error-bg);
+  color: var(--error-color);
+}
+
+.review-question {
+  font-size: 1.4rem;
+  font-weight: 600;
+  color: var(--text-color);
+  margin-bottom: 16px;
+  line-height: 1.4;
+}
+
+.review-details {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding-top: 12px;
+  border-top: 1px solid #f1f5f9;
+}
+
+.answer-line {
+  display: flex;
+  gap: 1.2rem;
+  font-size: 1.4rem;
+  align-items: baseline;
+}
+
+.answer-line .label {
+  color: var(--text-muted);
+  flex-shrink: 0;
+}
+
+.answer-line .value {
+  font-weight: 600;
+}
+
+.answer-line.success .value {
+  color: var(--success-color);
+}
+
+.answer-line.error .value {
+  color: var(--error-color);
+}
+
+.correct-hint {
+  padding: 1rem 1.2rem;
+  background: var(--success-bg);
+  border-radius: 0.8rem;
+  border-left: 0.4rem solid var(--success-color);
+}
+
+.correct-hint .label {
+  color: var(--success-color);
+  opacity: 0.8;
+}
+
+.correct-hint .value {
+  color: var(--success-color);
+}
+
+@media (max-width: 480px) {
+  .answer-line {
+    flex-direction: column;
+  }
+}
+
+.motivation-section {
+  text-align: center;
+  padding: 2.4rem;
+  background-color: #f8fafc;
+  border-radius: var(--border-radius);
+  border: 0.1rem dashed var(--primary-color);
+  transition: all 0.3s ease;
+}
+
+.motivation-title {
+  display: block;
+  font-size: 1.6rem;
+  font-weight: 800;
+  color: var(--text-color);
+  margin-bottom: 0.8rem;
+}
+
+.motivation-message {
+  font-size: 1.4rem;
+  color: var(--text-muted);
+  line-height: 1.5;
+}
+
+.motivation-section.perfect {
+  background-color: var(--success-bg);
+  border-style: solid;
+  border-color: var(--success-color);
+}
+
+.motivation-section.perfect .motivation-title {
+  color: var(--success-color);
+}
+
+.motivation-section.good {
+  background-color: #fffbeb;
+  border-style: solid;
+  border-color: #f59e0b;
+}
+
+.motivation-section.good .motivation-title {
+  color: #d97706;
+}
+
+.motivation-section.practice {
+  background-color: #f1f5f9;
+  border-style: dashed;
+  border-color: var(--text-muted);
+}
+
+.motivation-section.practice .motivation-title {
+  color: var(--text-color);
 }
