@@ -95,9 +95,10 @@ function handleAnswer(
       ...latestState.answers,
       [questionData.id]: {
         questionText: questionData.question,
-        selectedOptionText: chosenOption ? chosenOption.text : 'Невідомо',
+        selectedOptionText: chosenOption ? chosenOption.text : '',
         correctOptionText: correctAnswer.text,
         isCorrect: isCorrect,
+        selectedOptionId,
       },
     };
 

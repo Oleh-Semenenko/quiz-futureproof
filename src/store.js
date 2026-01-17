@@ -1,11 +1,31 @@
-const APP_STORAGE_KEY = 'quiz_app_state_v1';
+const DATA_VERSION = '1.1';
+const APP_STORAGE_KEY = 'quiz_app_state';
 
-let state = JSON.parse(localStorage.getItem(APP_STORAGE_KEY)) || {
+const defaultState = {
   currentStep: 0,
   answers: {},
   userEmail: '',
+  version: DATA_VERSION,
 };
 
+const getInitialState = () => {
+  try {
+    const savedData = localStorage.getItem(APP_STORAGE_KEY);
+    if (!savedData) return defaultState;
+
+    const parsedData = JSON.parse(savedData);
+
+    if (parsedData.version !== DATA_VERSION) {
+      return defaultState;
+    }
+
+    return parsedData;
+  } catch (e) {
+    return defaultState;
+  }
+};
+
+let state = getInitialState();
 const listeners = [];
 
 const notifyListeners = () => {
@@ -22,20 +42,16 @@ export const store = {
   },
 
   resetQuiz: () => {
-    const emptyState = {
-      currentStep: 0,
-      answers: {},
-      userEmail: '',
-    };
-    store.updateState(emptyState);
+    store.updateState(defaultState);
   },
 
   subscribe: (listener) => {
-    if (listeners.includes(listener)) return;
-    listeners.push(listener);
-
+    if (!listeners.includes(listener)) {
+      listeners.push(listener);
+    }
     return () => {
-      listeners = listeners.filter((l) => l !== listener);
+      const index = listeners.indexOf(listener);
+      if (index > -1) listeners.splice(index, 1);
     };
   },
 };

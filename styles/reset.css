@@ -22,7 +22,7 @@ body {
   min-height: 100vh;
   line-height: 1.5;
   -webkit-font-smoothing: antialiased;
-  background-color: var(--bg-color, #f4f4f4);
+  background-color: var(--bg-color);
   color: var(--text-color);
   font-family:
     system-ui,

@@ -116,16 +116,16 @@
   font-size: 1.4rem;
   font-weight: 600;
   color: var(--text-color);
-  margin-bottom: 16px;
+  margin-bottom: 1.6rem;
   line-height: 1.4;
 }
 
 .review-details {
   display: flex;
   flex-direction: column;
-  gap: 10px;
-  padding-top: 12px;
-  border-top: 1px solid #f1f5f9;
+  gap: 1rem;
+  padding-top: 1.2rem;
+  border-top: 0.1rem solid var(--border-color);
 }
 
 .answer-line {
@@ -177,7 +177,7 @@
 .motivation-section {
   text-align: center;
   padding: 2.4rem;
-  background-color: #f8fafc;
+  background-color: var(--bg-color);
   border-radius: var(--border-radius);
   border: 0.1rem dashed var(--primary-color);
   transition: all 0.3s ease;
@@ -218,7 +218,7 @@
 }
 
 .motivation-section.practice {
-  background-color: #f1f5f9;
+  background-color: var(--light-blue-color);
   border-style: dashed;
   border-color: var(--text-muted);
 }

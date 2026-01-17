@@ -2,6 +2,7 @@
   /* Основна палітра */
   --primary-color: #4f46e5;
   --primary-hover: #4338ca;
+  --light-blue-color: #f1f5f9;
 
   /* Статуси */
   --success-color: #22c55e;
@@ -14,6 +15,7 @@
   --white-color: #fff;
   --text-color: #1e293b;
   --text-muted: #64748b;
+  --header-bg: #f3f4f6;
 
   /* Конструктив */
   --border-radius: 1.2rem;
