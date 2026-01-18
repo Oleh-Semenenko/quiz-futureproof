@@ -1,22 +1,77 @@
 import { getQuestionsCount } from './data/questions.js';
 import { store } from './store.js';
-import { renderQuestionScreen } from './components/QuestionScreen.js';
-import { renderEmailScreen } from './components/EmailScreen.js';
-import { renderResultsScreen } from './components/ResultsScreen.js';
+import { renderQuestionScreen } from './screens/QuestionScreen.js';
+import { renderEmailScreen } from './screens/EmailScreen.js';
+import { renderResultsScreen } from './screens/ResultsScreen.js';
 import { attachHeaderEvents, renderHeader } from './components/Header.js';
 
-function renderApp() {
+const loadedStyles = new Set();
+
+async function injectCriticalStyle(stylePath) {
+  if (loadedStyles.has(`inline-${stylePath}`)) return;
+
+  try {
+    const response = await fetch(stylePath);
+    if (!response.ok) throw new Error(`Style not found: ${stylePath}`);
+    const cssText = await response.text();
+
+    const style = document.createElement('style');
+    style.id = `critical-${stylePath.replace(/[^a-z0-9]/gi, '-')}`;
+    style.textContent = cssText;
+    document.head.appendChild(style);
+
+    loadedStyles.add(`inline-${stylePath}`);
+  } catch (err) {
+    console.error('Critical style failed:', err);
+  }
+}
+
+function loadExternalStyle(href) {
+  if (loadedStyles.has(`link-${href}`)) return Promise.resolve();
+
+  return new Promise((resolve, reject) => {
+    const link = document.createElement('link');
+    link.rel = 'stylesheet';
+    link.href = href;
+    link.onload = () => {
+      loadedStyles.add(`link-${href}`);
+      resolve();
+    };
+    link.onerror = () => reject(new Error(`Style load error: ${href}`));
+    document.head.appendChild(link);
+  });
+}
+
+export async function renderApp() {
+  await Promise.allSettled([
+    injectCriticalStyle('../styles/reset.css'),
+    injectCriticalStyle('../styles/variables.css'),
+    injectCriticalStyle('../styles/base.css'),
+    injectCriticalStyle('../styles/header.css'),
+  ]);
+
   const state = store.getState();
   const currentScreen = state.currentStep;
   const rootEl = document.getElementById('root');
 
+  if (!document.getElementById('main-content')) {
+    rootEl.innerHTML = `
+      <div id="header-wrapper"></div>
+      <main id="main-content"></main>
+    `;
+  }
+
+  const mainContentEl = document.getElementById('main-content');
+  const headerWrapper = document.getElementById('header-wrapper');
+
+  mainContentEl.classList.remove('visible');
+
+  const totalQuestionsAmount = getQuestionsCount();
   let headerProps = {
     title: 'Quiz',
     currentStep: currentScreen,
     showGoBackBtn: currentScreen > 0,
   };
-
-  const totalQuestionsAmount = getQuestionsCount();
 
   if (currentScreen < totalQuestionsAmount) {
     headerProps.title = `Question ${currentScreen + 1} of ${totalQuestionsAmount}`;
@@ -27,28 +82,47 @@ function renderApp() {
     headerProps.showGoBackBtn = false;
   }
 
-  rootEl.innerHTML = `
-    ${renderHeader(headerProps)}
-    <main id="main-content"></main>
-  `;
-
+  headerWrapper.innerHTML = renderHeader(headerProps);
   attachHeaderEvents();
 
-  const mainContentEl = document.getElementById('main-content');
-  mainContentEl.innerHTML = '';
+  const screenConfig = {
+    question: {
+      style: '../styles/screens/questions.css',
+      render: () => renderQuestionScreen(mainContentEl, currentScreen),
+    },
+    email: {
+      style: '../styles/screens/email.css',
+      render: () => renderEmailScreen(mainContentEl),
+    },
+    result: {
+      style: '../styles/screens/results.css',
+      render: () => renderResultsScreen(mainContentEl),
+    },
+  };
 
   let screenType = 'question';
   if (currentScreen === totalQuestionsAmount) screenType = 'email';
   if (currentScreen > totalQuestionsAmount) screenType = 'result';
 
-  const screensRenderFunctionsMap = {
-    question: () => renderQuestionScreen(mainContentEl, currentScreen),
-    email: () => renderEmailScreen(mainContentEl),
-    result: () => renderResultsScreen(mainContentEl),
-  };
+  const config = screenConfig[screenType];
 
-  if (screensRenderFunctionsMap[screenType]) {
-    screensRenderFunctionsMap[screenType]();
+  if (config) {
+    try {
+      await loadExternalStyle(config.style);
+
+      setTimeout(() => {
+        mainContentEl.innerHTML = '';
+        config.render();
+
+        requestAnimationFrame(() => {
+          mainContentEl.classList.add('visible');
+        });
+      }, 100);
+    } catch (e) {
+      console.error(e);
+      // Render fallback
+      config.render();
+    }
   }
 }
 

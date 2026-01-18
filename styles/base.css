@@ -1,18 +1,6 @@
-html {
-  font-size: 62.5%;
-}
-
 body {
-  font-family:
-    'Inter',
-    system-ui,
-    -apple-system,
-    sans-serif;
   background-color: var(--bg-color);
   color: var(--text-color);
-  line-height: 1.5;
-  margin: 0;
-  font-size: 1.6rem;
 }
 
 h1 {
@@ -21,16 +9,6 @@ h1 {
   font-weight: 800;
   line-height: 2;
   color: var(--primary-color);
-}
-
-#main-content {
-  padding: 4rem 0;
-}
-
-.container {
-  max-width: 60rem;
-  margin: 0 auto;
-  padding: 0 2rem;
 }
 
 button {
