@@ -8,46 +8,53 @@ import { attachHeaderEvents, renderHeader } from './components/Header.js';
 const loadedStyles = new Set();
 
 async function injectCriticalStyle(stylePath) {
-  if (loadedStyles.has(`inline-${stylePath}`)) return;
+  const normalizedPath = stylePath.startsWith('../')
+    ? stylePath.replace('../', './')
+    : stylePath;
+  if (loadedStyles.has(`inline-${normalizedPath}`)) return;
 
   try {
-    const response = await fetch(stylePath);
-    if (!response.ok) throw new Error(`Style not found: ${stylePath}`);
+    const response = await fetch(normalizedPath);
+    if (!response.ok) throw new Error(`Style not found: ${normalizedPath}`);
     const cssText = await response.text();
 
     const style = document.createElement('style');
-    style.id = `critical-${stylePath.replace(/[^a-z0-9]/gi, '-')}`;
+    style.id = `critical-${normalizedPath.replace(/[^a-z0-9]/gi, '-')}`;
     style.textContent = cssText;
     document.head.appendChild(style);
 
-    loadedStyles.add(`inline-${stylePath}`);
+    loadedStyles.add(`inline-${normalizedPath}`);
   } catch (err) {
     console.error('Critical style failed:', err);
   }
 }
 
 function loadExternalStyle(href) {
-  if (loadedStyles.has(`link-${href}`)) return Promise.resolve();
+  const normalizedHref = href.startsWith('../')
+    ? href.replace('../', './')
+    : href;
+  if (loadedStyles.has(`link-${normalizedHref}`)) return Promise.resolve();
 
   return new Promise((resolve, reject) => {
     const link = document.createElement('link');
     link.rel = 'stylesheet';
-    link.href = href;
+    link.href = normalizedHref;
     link.onload = () => {
-      loadedStyles.add(`link-${href}`);
+      loadedStyles.add(`link-${normalizedHref}`);
       resolve();
     };
-    link.onerror = () => reject(new Error(`Style load error: ${href}`));
+    link.onerror = () =>
+      reject(new Error(`Style load error: ${normalizedHref}`));
     document.head.appendChild(link);
   });
 }
 
 export async function renderApp() {
   await Promise.allSettled([
-    injectCriticalStyle('../styles/reset.css'),
-    injectCriticalStyle('../styles/variables.css'),
-    injectCriticalStyle('../styles/base.css'),
-    injectCriticalStyle('../styles/header.css'),
+    injectCriticalStyle('styles/reset.css'),
+    injectCriticalStyle('styles/variables.css'),
+    injectCriticalStyle('styles/base.css'),
+    injectCriticalStyle('styles/header.css'),
   ]);
 
   const state = store.getState();
