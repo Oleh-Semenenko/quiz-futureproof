@@ -1,21 +1,18 @@
-/* 1. Box sizing — найважливіше для розрахунку відступів та рамок */
 *,
 *::before,
 *::after {
   box-sizing: border-box;
 }
 
-/* 2. Прибираємо дефолтні відступи у всіх елементів */
 * {
   margin: 0;
   padding: 0;
   font: inherit;
 }
 
-/* 3. Налаштовуємо базову висоту та якість шрифтів */
 html {
   height: 100%;
-  -webkit-text-size-adjust: none; /* Фікс для iOS */
+  -webkit-text-size-adjust: none;
 }
 
 body {
@@ -30,7 +27,6 @@ body {
     sans-serif;
 }
 
-/* 4. Покращуємо роботу з картинками та медіа */
 img,
 picture,
 video,
@@ -40,13 +36,11 @@ svg {
   max-width: 100%;
 }
 
-/* 5. Прибираємо стандартні стилі списків (корисно для варіантів відповідей) */
 ul,
 ol {
   list-style: none;
 }
 
-/* 6. Покращуємо інтерактивні елементи */
 button {
   cursor: pointer;
   background: none;
@@ -58,12 +52,10 @@ input {
   width: 100%;
 }
 
-/* 7. Видаляємо дефолтні рамки fieldset (ми їх стилізуємо самі) */
 fieldset {
   border: none;
 }
 
-/* 8. Запобігаємо горизонтальному скролу */
 body {
   overflow-x: hidden;
 }

@@ -1,23 +1,23 @@
 :root {
-  /* Основна палітра */
+  /* Main colors */
   --primary-color: #4f46e5;
   --primary-hover: #4338ca;
   --light-blue-color: #f1f5f9;
 
-  /* Статуси */
+  /* Statuses */
   --success-color: #22c55e;
   --success-bg: #f0fdf4;
   --error-color: #ef4444;
   --error-bg: #fef2f2;
 
-  /* Текст та фон */
+  /* Text and background */
   --bg-color: #f8fafc;
   --white-color: #fff;
   --text-color: #1e293b;
   --text-muted: #64748b;
   --header-bg: #f3f4f6;
 
-  /* Конструктив */
+  /* Borders and shadows */
   --border-radius: 1.2rem;
   --border-color: #e2e8f0;
   --card-shadow:

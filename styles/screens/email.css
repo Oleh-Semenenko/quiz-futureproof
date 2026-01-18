@@ -60,7 +60,7 @@ input.email-input.invalid:focus {
 }
 
 input.email-input:-webkit-autofill {
-  -webkit-box-shadow: 0 0 0px 1000px white inset !important;
+  -webkit-box-shadow: 0 0 0px 1000px var(--white-color) inset !important;
   -webkit-text-fill-color: var(--text-color) !important;
 }
 
