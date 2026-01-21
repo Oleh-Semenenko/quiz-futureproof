@@ -1,25 +1,24 @@
 import { store } from '../store.js';
+import { isValidEmail } from '../utils/validation.js';
+import { getElement, addListener, renderContent, addClass, removeClass } from '../utils/dom.js';
 
-export const renderEmailScreen = (mainContentEl) => {
-  const state = store.getState();
-
-  mainContentEl.innerHTML = `
+const renderTemplate = (userEmail) => `
   <div class="container">
     <div class="email-screen">
-      <form class="email-form" id="email-form" novalidate>
+      <form class="email-form" novalidate>
         <label for="email-input">We will send the results to your email:</label>
         <input
           type="email"
           id="email-input"
           class="email-input"
           placeholder="Enter your email"
-          value="${state.userEmail || ''}"
+          value="${userEmail || ''}"
           inputmode="email"
           autocomplete="email"
           aria-describedby="email-error"
           required
         />
-        <span class="error-message" role="alert" id="email-error"></span>
+        <span class="error-message" role="alert"></span>
 
         <button type="submit" id="submit-email-btn" class="submit-btn">
           Submit
@@ -29,29 +28,39 @@ export const renderEmailScreen = (mainContentEl) => {
   </div>
   `;
 
-  const formEl = mainContentEl.querySelector('#email-form');
-  const emailInputEl = mainContentEl.querySelector('#email-input');
-  const errorMessageEl = mainContentEl.querySelector('#email-error');
+const setupEvents = (container) => {
+  const formEl = getElement('.email-form', container);
+  const inputEl = getElement('.email-input', container);
+  const errorEl = getElement('.error-message', container);
 
-  emailInputEl.oninput = () => {
-    if (emailInputEl.validity.valid) {
-      errorMessageEl.textContent = '';
-      errorMessageEl.classList.remove('visible');
-      emailInputEl.classList.remove('invalid');
-    }
-  };
-
-  formEl.onsubmit = (e) => {
+  const handleInputEvent = () => {
+    removeClass(inputEl, 'invalid');
+    removeClass(errorEl, 'visible');
+    errorEl.textContent = '';
+  }
+  const handleSubmitEvent = (e) => {
     e.preventDefault();
-    if (emailInputEl.checkValidity()) {
+    const emailValue = inputEl.value.trim();
+
+    if (isValidEmail(emailValue)) {
       store.updateState({
-        userEmail: emailInputEl.value.trim(),
-        currentStep: state.currentStep + 1,
+        userEmail: emailValue,
+        currentStep: store.getState().currentStep + 1
       });
     } else {
-      errorMessageEl.textContent = 'Please enter a valid email address.';
-      errorMessageEl.classList.add('visible');
-      emailInputEl.classList.add('invalid');
+      addClass(inputEl, 'invalid');
+      addClass(errorEl, 'visible');
+      errorEl.textContent = 'Please enter a valid email address.';
     }
-  };
+  }
+
+  addListener(inputEl, 'input', (handleInputEvent));
+  addListener(formEl, 'submit', handleSubmitEvent);
 };
+
+export function renderEmailScreen(mainContentEl) {
+  const { userEmail } = store.getState();
+
+  renderContent(mainContentEl, renderTemplate(userEmail));
+  setupEvents(mainContentEl);
+}

@@ -1,19 +1,11 @@
 import { getQuestionsCount } from '../data/questions.js';
 import { store } from '../store.js';
+import { getElement, addListener, renderContent, setSafeText } from '../utils/dom.js';
 
-export const renderResultsScreen = (mainContentEl) => {
-  const { answers, userEmail } = store.getState();
-  const totalQuestionsAmount = getQuestionsCount();
-  const score = Object.values(answers)?.filter((a) => a.isCorrect)?.length || 0;
-  const scorePercentage = (score * 100) / totalQuestionsAmount;
-  const answersArray = Object.values(answers);
-
-  const motivation = createMotivationText(scorePercentage);
-
-  const answersHtml = answersArray
+const renderAnswersList = (answersArray) => {
+  return answersArray
     .map((answer, index) => {
       const isCorrect = answer.isCorrect;
-
       return `
       <div class="review-item ${isCorrect ? 'correct' : 'incorrect'}">
         <div class="review-header">
@@ -29,51 +21,67 @@ export const renderResultsScreen = (mainContentEl) => {
             <span class="value">${answer.selectedOptionText}</span>
           </div>
           
-          ${
-            !isCorrect
-              ? `
+          ${!isCorrect ? `
             <div class="answer-line correct-hint">
               <span class="label">Correct answer:</span>
               <span class="value">${answer.correctOptionText}</span>
             </div>
-          `
-              : ''
-          }
+          ` : ''}
         </div>
       </div>
     `;
     })
     .join('');
+};
 
-  mainContentEl.innerHTML = `
-    <div class="container">
-      <div class="results-screen">
-        <p class="result-score">Your score: ${score} / ${totalQuestionsAmount}</p>
-        <div class="motivation-section ${motivation.className}">
-          <p class="motivation-title">${motivation.title}</p>
-          <p class="motivation-message">${motivation.text}</p>
-        </div>
-        <p class="result__user-email">
-          Results have been sent to: <span class="email-address"></span>
-        </p>
-        <button id="reset-btn" class="restart-btn">Restart Quiz</button>
+const renderTemplate = (score, total, motivation, answersHtml) => `
+  <div class="container">
+    <div class="results-screen">
+      <p class="result-score">Your score: ${score} / ${total}</p>
+      <div class="motivation-section ${motivation.className}">
+        <p class="motivation-title">${motivation.title}</p>
+        <p class="motivation-message">${motivation.text}</p>
       </div>
+      <p class="result__user-email">
+        Results have been sent to: <span class="email-address"></span>
+      </p>
+      <button class="restart-btn">Restart Quiz</button>
+    </div>
 
-      <div class="answers-review">
-        <h3 class="review-title">Details</h3>
-        <div class="review-list">
-          ${answersHtml}
-        </div>
+    <div class="answers-review">
+      <h3 class="review-title">Details</h3>
+      <div class="review-list">
+        ${answersHtml}
       </div>
     </div>
-    `;
+  </div>
+`;
 
-  mainContentEl.querySelector('.email-address').textContent = userEmail;
+const setupUI = (container, userEmail) => {
+  setSafeText('.email-address', userEmail, container);
 
-  const resetBtn = mainContentEl.querySelector('#reset-btn');
-  resetBtn.addEventListener('click', () => {
+  const resetBtn = getElement('.restart-btn', container);
+  const handleResetEvent = () => {
     store.resetQuiz();
-  });
+  };
+  addListener(resetBtn, 'click', handleResetEvent);
+};
+
+export const renderResultsScreen = (mainContentEl) => {
+  const { answers, userEmail } = store.getState();
+  const totalQuestionsAmount = getQuestionsCount();
+  const answersArray = Object.values(answers);
+  const score = answersArray.filter((a) => a.isCorrect).length || 0;
+  const scorePercentage = (score * 100) / totalQuestionsAmount;
+
+  const motivation = createMotivationText(scorePercentage);
+  const answersHtml = renderAnswersList(answersArray);
+
+  renderContent(
+    mainContentEl,
+    renderTemplate(score, totalQuestionsAmount, motivation, answersHtml)
+  );
+  setupUI(mainContentEl, userEmail);
 };
 
 const createMotivationText = (percentage) => {
