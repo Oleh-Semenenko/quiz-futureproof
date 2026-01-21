@@ -2,6 +2,28 @@ import { getQuestionsCount } from '../data/questions.js';
 import { store } from '../store.js';
 import { getElement, addListener, renderContent, setSafeText } from '../utils/dom.js';
 
+const createMotivationText = (percentage) => {
+  if (percentage === 100) {
+    return {
+      title: 'Awesome! You are a Pro! 🏆',
+      text: "Absolute perfection. You've mastered every single question!",
+      className: 'perfect',
+    };
+  } else if (percentage >= 50) {
+    return {
+      title: 'Great Job! 🌟',
+      text: 'You have a strong foundation. Just a few more steps to perfection!',
+      className: 'good',
+    };
+  } else {
+    return {
+      title: 'Keep it up! 📚',
+      text: 'Review your mistakes and try again. Practice makes perfect!',
+      className: 'practice',
+    };
+  }
+};
+
 const renderAnswersList = (answersArray) => {
   return answersArray
     .map((answer, index) => {
@@ -57,14 +79,14 @@ const renderTemplate = (score, total, motivation, answersHtml) => `
   </div>
 `;
 
-const setupUI = (container, userEmail) => {
-  setSafeText('.email-address', userEmail, container);
+const setupEvents = (containerEl, userEmail) => {
+  setSafeText('.email-address', userEmail, containerEl);
 
-  const resetBtn = getElement('.restart-btn', container);
+  const resetBtnEl = getElement('.restart-btn', containerEl);
   const handleResetEvent = () => {
     store.resetQuiz();
   };
-  addListener(resetBtn, 'click', handleResetEvent);
+  addListener(resetBtnEl, 'click', handleResetEvent);
 };
 
 export const renderResultsScreen = (mainContentEl) => {
@@ -81,27 +103,5 @@ export const renderResultsScreen = (mainContentEl) => {
     mainContentEl,
     renderTemplate(score, totalQuestionsAmount, motivation, answersHtml)
   );
-  setupUI(mainContentEl, userEmail);
-};
-
-const createMotivationText = (percentage) => {
-  if (percentage === 100) {
-    return {
-      title: 'Awesome! You are a Pro! 🏆',
-      text: "Absolute perfection. You've mastered every single question!",
-      className: 'perfect',
-    };
-  } else if (percentage >= 50) {
-    return {
-      title: 'Great Job! 🌟',
-      text: 'You have a strong foundation. Just a few more steps to perfection!',
-      className: 'good',
-    };
-  } else {
-    return {
-      title: 'Keep it up! 📚',
-      text: 'Review your mistakes and try again. Practice makes perfect!',
-      className: 'practice',
-    };
-  }
+  setupEvents(mainContentEl, userEmail);
 };

@@ -6,8 +6,37 @@ import { renderEmailScreen } from './screens/EmailScreen.js';
 import { renderResultsScreen } from './screens/ResultsScreen.js';
 import { attachHeaderEvents, renderHeader } from './components/Header.js';
 
-export async function renderApp() {
+const getHeaderProps = (currentStep, totalQuestionsAmount) => {
+  const baseProps = {
+    title: 'Quiz',
+    currentStep,
+    showGoBackBtn: currentStep > 0,
+  };
+
+  if (currentStep < totalQuestionsAmount) {
+    return {
+      ...baseProps,
+      title: `Question ${currentStep + 1} of ${totalQuestionsAmount}`,
+    };
+  }
+
+  if (currentStep === totalQuestionsAmount) {
+    return {
+      ...baseProps,
+      title: 'Enter your email',
+    };
+  }
+
+  return {
+    ...baseProps,
+    title: 'Quiz Results',
+    showGoBackBtn: false,
+  };
+}
+
+export const renderApp = async () => {
   const { currentStep } = store.getState();
+  const totalQuestionsAmount = getQuestionsCount();
   const rootEl = getElement('#root');
 
   if (!getElement('.main-content', rootEl)) {
@@ -19,28 +48,14 @@ export async function renderApp() {
   }
 
   const mainContentEl = getElement('.main-content');
-  const headerWrapper = getElement('.header-wrapper');
+  const headerWrapperEl = getElement('.header-wrapper');
 
   removeClass(mainContentEl, 'visible');
 
-  const totalQuestionsAmount = getQuestionsCount();
-  let headerProps = {
-    title: 'Quiz',
-    currentStep,
-    showGoBackBtn: currentStep > 0,
-  };
+  const headerProps = getHeaderProps(currentStep, totalQuestionsAmount);
 
-  if (currentStep < totalQuestionsAmount) {
-    headerProps.title = `Question ${currentStep + 1} of ${totalQuestionsAmount}`;
-  } else if (currentStep === totalQuestionsAmount) {
-    headerProps.title = 'Enter your email';
-  } else {
-    headerProps.title = 'Quiz Results';
-    headerProps.showGoBackBtn = false;
-  }
-
-  renderContent(headerWrapper, renderHeader(headerProps));
-  attachHeaderEvents(headerWrapper);
+  renderContent(headerWrapperEl, renderHeader(headerProps));
+  attachHeaderEvents(headerWrapperEl);
 
   const screenConfig = {
     question: {

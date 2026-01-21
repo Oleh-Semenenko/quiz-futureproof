@@ -5,74 +5,24 @@ import { getElement, getElements, addListener, addClass, renderContent } from '.
 const TIMEOUT_DELAY = 1500;
 let answerTimeoutId = null;
 
-const renderTemplate = (questionData, savedAnswer) => {
-  const isAnswered = !!savedAnswer;
+const toggleAnswerClasses = (question, fieldsetEl, selectedId) => {
+  const labelsEl = getElements('.question-label', fieldsetEl);
+  labelsEl.forEach((label) => {
+    const inputEl = getElement('input', label);
+    const option = question.options.find((opt) => opt.id === inputEl.value);
 
-  return `
-    <div class="container">
-      <div class="question-screen">
-        <fieldset class="question-fieldset" ${isAnswered ? 'disabled' : ''}>
-          <legend>${questionData.question}</legend>
-          ${questionData.options.map(option => `
-            <label class="question-label">
-              <input
-                type="radio"
-                name="question-option"
-                value="${option.id}"
-                ${savedAnswer?.selectedOptionId === option.id ? 'checked' : ''}
-                class="question-input" />
-              ${option.text}
-            </label>
-          `).join('')}
-        </fieldset>
-        ${isAnswered ? '<button class="next-btn">Next →</button>' : ''}
-      </div>  
-    </div>
-  `;
-};
-
-
-const setupEvents = (mainContentEl, questionData, isAnswered) => {
-  const fieldsetEl = getElement('.question-fieldset', mainContentEl);
-
-  addListener(fieldsetEl, 'change', (e) => {
-    if (e.target.classList.contains('question-input')) {
-      handleAnswer(questionData, e.target.value, e.target, fieldsetEl);
+    if (selectedId) {
+      if (option.isCorrect) addClass(label, 'correct');
+      else if (inputEl.value === selectedId) addClass(label, 'incorrect');
     }
   });
-
-  if (isAnswered) {
-    const nextBtn = getElement('.next-btn', mainContentEl);
-    addListener(nextBtn, 'click', () => {
-      const { currentStep } = store.getState();
-      store.updateState({ currentStep: currentStep + 1 });
-    });
-  }
 };
 
-export function renderQuestionScreen(mainContentEl, index) {
-  const { answers } = store.getState();
-  const questionData = getQuestionByIndex(index);
-
-  if (!questionData) return;
-
-  const savedAnswer = answers[questionData.id];
-
-  renderContent(mainContentEl, renderTemplate(questionData, savedAnswer));
-
-  if (savedAnswer) {
-    const fieldsetEl = getElement('.question-fieldset', mainContentEl);
-    toggleAnswerClasses(questionData, fieldsetEl, savedAnswer.selectedOptionId);
-  }
-
-  setupEvents(mainContentEl, questionData, !!savedAnswer);
-}
-
-function handleAnswer(questionData, selectedOptionId, targetElement, fieldsetEl) {
+const handleAnswer = (questionData, selectedOptionId, targetElement, fieldsetEl) => {
   if (answerTimeoutId) clearTimeout(answerTimeoutId);
 
-  const inputs = getElements('input', fieldsetEl);
-  inputs.forEach(input => input.disabled = true);
+  const inputsEl = getElements('input', fieldsetEl);
+  inputsEl.forEach(input => input.disabled = true);
 
   const correctAnswer = getCorrectAnswer(questionData.id);
   const isCorrect = selectedOptionId === correctAnswer.id;
@@ -105,15 +55,70 @@ function handleAnswer(questionData, selectedOptionId, targetElement, fieldsetEl)
   }, TIMEOUT_DELAY);
 }
 
-const toggleAnswerClasses = (question, fieldsetEl, selectedId) => {
-  const labels = getElements('.question-label', fieldsetEl);
-  labels.forEach((label) => {
-    const input = getElement('input', label);
-    const option = question.options.find((opt) => opt.id === input.value);
+const renderTemplate = (questionData, savedAnswer) => {
+  const isAnswered = !!savedAnswer;
 
-    if (selectedId) {
-      if (option.isCorrect) addClass(label, 'correct');
-      else if (input.value === selectedId) addClass(label, 'incorrect');
+  return `
+    <div class="container">
+      <div class="question-screen">
+        <fieldset class="question-fieldset" ${isAnswered ? 'disabled' : ''}>
+          <legend>${questionData.question}</legend>
+          ${questionData.options.map(option => `
+            <label class="question-label">
+              <input
+                type="radio"
+                name="question-option"
+                value="${option.id}"
+                ${savedAnswer?.selectedOptionId === option.id ? 'checked' : ''}
+                class="question-input" />
+              ${option.text}
+            </label>
+          `).join('')}
+        </fieldset>
+        ${isAnswered ? '<button class="next-btn">Next →</button>' : ''}
+      </div>  
+    </div>
+  `;
+};
+
+const setupEvents = (containerEl, questionData, isAnswered) => {
+  const fieldsetEl = getElement('.question-fieldset', containerEl);
+
+  addListener(fieldsetEl, 'change', (e) => {
+    if (e.target.classList.contains('question-input')) {
+      handleAnswer(questionData, e.target.value, e.target, fieldsetEl);
     }
   });
+
+  if (isAnswered) {
+    const nextBtnEl = getElement('.next-btn', containerEl);
+    const handleNextBtnClick = () => {
+      const { currentStep } = store.getState();
+      store.updateState({ currentStep: currentStep + 1 });
+    };
+    addListener(nextBtnEl, 'click', handleNextBtnClick);
+  }
 };
+
+export const renderQuestionScreen = (mainContentEl, index) => {
+  if (answerTimeoutId) {
+    clearTimeout(answerTimeoutId);
+    answerTimeoutId = null;
+  }
+
+  const { answers } = store.getState();
+  const questionData = getQuestionByIndex(index);
+
+  if (!questionData) return;
+
+  const savedAnswer = answers[questionData.id];
+
+  renderContent(mainContentEl, renderTemplate(questionData, savedAnswer));
+
+  if (savedAnswer) {
+    const fieldsetEl = getElement('.question-fieldset', mainContentEl);
+    toggleAnswerClasses(questionData, fieldsetEl, savedAnswer.selectedOptionId);
+  }
+
+  setupEvents(mainContentEl, questionData, !!savedAnswer);
+}

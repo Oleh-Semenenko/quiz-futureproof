@@ -28,10 +28,10 @@ const renderTemplate = (userEmail) => `
   </div>
   `;
 
-const setupEvents = (container) => {
-  const formEl = getElement('.email-form', container);
-  const inputEl = getElement('.email-input', container);
-  const errorEl = getElement('.error-message', container);
+const setupEvents = (containerEl) => {
+  const formEl = getElement('.email-form', containerEl);
+  const inputEl = getElement('.email-input', containerEl);
+  const errorEl = getElement('.error-message', containerEl);
 
   const handleInputEvent = () => {
     removeClass(inputEl, 'invalid');
@@ -54,11 +54,11 @@ const setupEvents = (container) => {
     }
   }
 
-  addListener(inputEl, 'input', (handleInputEvent));
+  addListener(inputEl, 'input', handleInputEvent);
   addListener(formEl, 'submit', handleSubmitEvent);
 };
 
-export function renderEmailScreen(mainContentEl) {
+export const renderEmailScreen = (mainContentEl) => {
   const { userEmail } = store.getState();
 
   renderContent(mainContentEl, renderTemplate(userEmail));
